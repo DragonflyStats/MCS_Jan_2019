@@ -1,0 +1,11 @@
+
+ols_prep_srplot_data Studentized residual plot data
+Description
+Generates data for studentized residual plot.
+Usage
+ols_prep_srplot_data(model)
+Arguments
+model An object of class lm.
+Examples
+model <- lm(read ~ write + math + science, data = hsb)
+ols_prep_srplot_data(model)
