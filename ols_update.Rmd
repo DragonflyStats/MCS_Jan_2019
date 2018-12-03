@@ -1,0 +1,36 @@
+
+ols_update Update olsrr package
+Description
+Check whether olsrr is up-to-date, and will install after confirmation.
+Usage
+ols_update(owner = "rsquaredacademy", repo = "olsrr")
+Arguments
+owner repository owner
+repo name of the package
+70 rvsr_plot_shiny
+Examples
+## Not run:
+ols_update()
+## End(Not run)
+rivers Test Data Set
+Description
+Test Data Set
+Usage
+rivers
+Format
+An object of class data.frame with 20 rows and 6 columns.
+rvsr_plot_shiny Residual vs regressors plot for shiny app
+Description
+Graph to determine whether we should add a new predictor to the model already containing other
+predictors. The residuals from the model is regressed on the new predictor and if the plot shows
+non random pattern, you should consider adding the new predictor to the model.
+Usage
+rvsr_plot_shiny(model, data, variable)
+Arguments
+model An object of class lm.
+data A dataframe or tibble.
+variable Character; new predictor to be added to the model.
+Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+rvsr_plot_shiny(model, mtcars, 'drat')
+stepdata 71
