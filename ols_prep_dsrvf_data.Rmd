@@ -1,0 +1,22 @@
+ols_prep_dsrvf_data Deleted studentized residual plot data
+Description
+Generates data for deleted studentized residual vs fitted plot.
+Usage
+ols_prep_dsrvf_data(model)
+Arguments
+model An object of class lm.
+Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_prep_dsrvf_data(model)
+ols_prep_outlier_obs Cooks’ D outlier observations
+Description
+Identify outliers in cook’s d plot.
+Usage
+ols_prep_outlier_obs(k)
+Arguments
+k Cooks’ d bar plot data.
+ols_prep_regress_x 39
+Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+k <- ols_prep_cdplot_data(model)
+ols_prep_outlier_obs(k)
