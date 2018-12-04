@@ -1,0 +1,1719 @@
+Package ‘olsrr’
+November 22, 2018
+Type Package
+Title Tools for Building OLS Regression Models
+Version 0.5.2
+#### Description Tools designed to make it easier for users, particularly beginner/intermediate R users
+to build ordinary least squares regression models. Includes comprehensive regression output,
+heteroskedasticity tests, collinearity diagnostics, residual diagnostics, measures of influence,
+model fit assessment and variable selection procedures.
+Depends R(>= 3.3)
+Imports car, checkmate, cli, clisymbols, crayon, dplyr, ggplot2, gh,
+glue, goftest, graphics, gridExtra, magrittr, nortest, purrr,
+Rcpp, recipes (>= 0.1.4), rlang, shiny, stringr, tibble, tidyr
+Suggests caret, covr, descriptr, grid, haven, jsonlite, knitr,
+lubridate, readr, readxl, rmarkdown, scales, shinyBS,
+shinythemes, testthat, tools, vdiffr
+License MIT + file LICENSE
+URL https://olsrr.rsquaredacademy.com/,
+https://github.com/rsquaredacademy/olsrr
+BugReports https://github.com/rsquaredacademy/olsrr/issues
+Encoding UTF-8
+LazyData true
+VignetteBuilder knitr
+RoxygenNote 6.1.1
+LinkingTo Rcpp
+NeedsCompilation yes
+Author Aravind Hebbali [aut, cre]
+Maintainer Aravind Hebbali <hebbali.aravind@gmail.com>
+Repository CRAN
+Date/Publication 2018-11-22 17:30:03 UTC
+1
+2 R topics documented:
+R topics documented:
+auto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+cement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+fitness . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+hsb . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+olsrr . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+ols_aic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+ols_apc . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+ols_coll_diag . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+ols_correlations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+ols_deps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+ols_fpe . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+ols_hadi . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+ols_hsp . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+ols_launch_app . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+ols_leverage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+ols_mallows_cp . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+ols_msep . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+ols_plot_added_variable . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+ols_plot_comp_plus_resid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+ols_plot_cooksd_bar . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+ols_plot_cooksd_chart . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+ols_plot_dfbetas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+ols_plot_dffits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+ols_plot_diagnostics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+ols_plot_hadi . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+ols_plot_obs_fit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+ols_plot_reg_line . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+ols_plot_resid_box . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+ols_plot_resid_fit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+ols_plot_resid_fit_spread . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+ols_plot_resid_hist . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+ols_plot_resid_lev . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+ols_plot_resid_pot . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+ols_plot_resid_qq . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+ols_plot_resid_regressor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+ols_plot_resid_stand . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+ols_plot_resid_stud . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+ols_plot_resid_stud_fit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+ols_plot_response . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+ols_pred_rsq . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+ols_prep_avplot_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+ols_prep_cdplot_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+ols_prep_cdplot_outliers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+ols_prep_dfbeta_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+ols_prep_dfbeta_outliers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+ols_prep_dsrvf_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+auto 3
+ols_prep_outlier_obs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+ols_prep_regress_x . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+ols_prep_regress_y . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+ols_prep_rfsplot_fmdata . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+ols_prep_rstudlev_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+ols_prep_rvsrplot_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+ols_prep_srchart_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+ols_prep_srplot_data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
+ols_press . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
+ols_pure_error_anova . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+ols_regress . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+ols_sbc . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+ols_sbic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48
+ols_step_all_possible . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49
+ols_step_all_possible_betas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+ols_step_backward_aic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+ols_step_backward_p . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+ols_step_best_subset . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+ols_step_both_aic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56
+ols_step_both_p . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 57
+ols_step_forward_aic . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59
+ols_step_forward_p . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 60
+ols_test_bartlett . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+ols_test_breusch_pagan . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+ols_test_correlation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 65
+ols_test_f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+ols_test_normality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+ols_test_score . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+ols_update . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+rivers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
+rvsr_plot_shiny . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
+stepdata . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
+surgical . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
+Index 72
+auto Test Data Set
+#### Description
+Test Data Set
+#### Usage
+auto
+4 hsb
+Format
+An object of class tbl_df (inherits from tbl, data.frame) with 74 rows and 11 columns.
+cement Test Data Set
+#### Description
+Test Data Set
+#### Usage
+cement
+Format
+An object of class data.frame with 13 rows and 6 columns.
+fitness Test Data Set
+#### Description
+Test Data Set
+#### Usage
+fitness
+Format
+An object of class data.frame with 31 rows and 7 columns.
+hsb Test Data Set
+#### Description
+Test Data Set
+#### Usage
+hsb
+Format
+An object of class data.frame with 200 rows and 15 columns.
+olsrr 5
+olsrr olsrr package
+#### Description
+Tools for teaching and learning OLS regression
+Details
+See the README on GitHub
+ols_aic Akaike information criterion
+#### Description
+Akaike information criterion for model selection.
+#### Usage
+ols_aic(model, method = c("R", "STATA", "SAS"))
+#### Arguments 
+* ``model``: An object of class lm.
+method A character vector; specify the method to compute AIC. Valid options include
+R, STATA and SAS.
+Details
+AIC provides a means for model selection. Given a collection of models for the data, AIC estimates
+the quality of each model, relative to each of the other models. R and STATA use loglikelihood to
+compute AIC. SAS uses residual sum of squares. Below is the formula in each case:
+R & STATA
+AIC = 􀀀2(loglikelihood) + 2p
+SAS
+AIC = n  ln(SSE=n) + 2p
+where n is the sample size and p is the number of model parameters including intercept.
+#### Value
+Akaike information criterion of the model.
+6 ols_apc
+References
+Akaike, H. (1969). “Fitting Autoregressive Models for Prediction.” Annals of the Institute of Statistical
+Mathematics 21:243–247.
+Judge, G. G., Griffiths, W. E., Hill, R. C., and Lee, T.-C. (1980). The Theory and Practice of
+Econometrics. New York: John Wiley & Sons.
+See Also
+Other model selection criteria: ols_apc, ols_fpe, ols_hsp, ols_mallows_cp, ols_msep, ols_sbc,
+ols_sbic
+#### Examples
+# using R computation method
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_aic(model)
+# using STATA computation method
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_aic(model, method = 'STATA')
+# using SAS computation method
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_aic(model, method = 'SAS')
+ols_apc Amemiya’s prediction criterion
+#### Description
+Amemiya’s prediction error.
+#### Usage
+ols_apc(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Amemiya’s Prediction Criterion penalizes R-squared more heavily than does adjusted R-squared
+for each addition degree of freedom used on the right-hand-side of the equation. The higher the
+better for this criterion.
+((n + p)=(n 􀀀 p))(1 􀀀 (R2))
+ols_coll_diag 7
+where n is the sample size, p is the number of predictors including the intercept and R^2 is the
+coefficient of determination.
+#### Value
+Amemiya’s prediction error of the model.
+References
+Amemiya, T. (1976). Selection of Regressors. Technical Report 225, Stanford University, Stanford,
+CA.
+Judge, G. G., Griffiths, W. E., Hill, R. C., and Lee, T.-C. (1980). The Theory and Practice of
+Econometrics. New York: John Wiley & Sons.
+See Also
+Other model selection criteria: ols_aic, ols_fpe, ols_hsp, ols_mallows_cp, ols_msep, ols_sbc,
+ols_sbic
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_apc(model)
+ols_coll_diag Collinearity diagnostics
+#### Description
+Variance inflation factor, tolerance, eigen#### Values and condition indices.
+#### Usage
+ols_coll_diag(model)
+ols_vif_tol(model)
+ols_eigen_cindex(model)
+#### Arguments 
+* ``model``: An object of class lm.
+8 ols_coll_diag
+Details
+Collinearity implies two variables are near perfect linear combinations of one another. Multicollinearity
+involves more than two variables. In the presence of multicollinearity, regression estimates
+are unstable and have high standard errors.
+Tolerance
+Percent of variance in the predictor that cannot be accounted for by other predictors.
+Steps to calculate tolerance:
+• Regress the kth predictor on rest of the predictors in the model.
+• Compute R2 - the coefficient of determination from the regression in the above step.
+• Tolerance = 1 􀀀 R2
+Variance Inflation Factor
+Variance inflation factors measure the inflation in the variances of the parameter estimates due to
+collinearities that exist among the predictors. It is a measure of how much the variance of the
+estimated regression coefficient k is inflated by the existence of correlation among the predictor
+variables in the model. A VIF of 1 means that there is no correlation among the kth predictor and
+the remaining predictor variables, and hence the variance of k is not inflated at all. The general
+rule of thumb is that VIFs exceeding 4 warrant further investigation, while VIFs exceeding 10 are
+signs of serious multicollinearity requiring correction.
+Steps to calculate VIF:
+• Regress the kth predictor on rest of the predictors in the model.
+• Compute R2 - the coefficient of determination from the regression in the above step.
+• Tolerance = 1=1 􀀀 R2 = 1=T olerance
+Condition Index
+Most multivariate statistical approaches involve decomposing a correlation matrix into linear combinations
+of variables. The linear combinations are chosen so that the first combination has the
+largest possible variance (subject to some restrictions), the second combination has the next largest
+variance, subject to being uncorrelated with the first, the third has the largest possible variance,
+subject to being uncorrelated with the first and second, and so forth. The variance of each of these
+linear combinations is called an eigen#### Value. Collinearity is spotted by finding 2 or more variables
+that have large proportions of variance (.50 or more) that correspond to large condition indices. A
+rule of thumb is to label as large those condition indices in the range of 30 or larger.
+#### Value
+ols_coll_diag returns an object of class "ols_coll_diag". An object of class "ols_coll_diag"
+is a list containing the following components:
+vif_t tolerance and variance inflation factors
+eig_cindex eigen #### Values and condition index
+ols_correlations 9
+References
+Belsley, D. A., Kuh, E., and Welsch, R. E. (1980). Regression Diagnostics: Identifying Influential
+Data and Sources of Collinearity. New York: John Wiley & Sons.
+#### Examples
+# model
+model <- lm(mpg ~ disp + hp + wt + drat, data = mtcars)
+# vif and tolerance
+ols_vif_tol(model)
+# eigen#### Values and condition indices
+ols_eigen_cindex(model)
+# collinearity diagnostics
+ols_coll_diag(model)
+ols_correlations Part and partial correlations
+#### Description
+Zero-order, part and partial correlations.
+#### Usage
+ols_correlations(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+ols_correlations() returns the relative importance of independent variables in determining response
+variable. How much each variable uniquely contributes to rsquare over and above that which
+can be accounted for by the other predictors? Zero order correlation is the Pearson correlation coefficient
+between the dependent variable and the independent variables. Part correlations indicates
+how much rsquare will decrease if that variable is removed from the model and partial correlations
+indicates amount of variance in response variable, which is not estimated by the other independent
+variables in the model, but is estimated by the specific variable.
+10 ols_deps
+#### Value
+ols_correlations returns an object of class "ols_correlations". An object of class "ols_correlations"
+is a data frame containing the following components:
+Zero-order zero order correlations
+Partial partial correlations
+Part part correlations
+References
+Morrison, D. F. 1976. Multivariate statistical methods. New York: McGraw-Hill.
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_correlations(model)
+ols_deps Check olsrr Version
+#### Description
+Checks the version of olsrr on local, cran, github release and devel.
+#### Usage
+ols_deps(owner = "rsquaredacademy", repo = "olsrr")
+#### Arguments 
+owner repository owner
+repo name of the package
+#### Value
+a tibble with package versions
+#### Examples
+```{r}
+## Not run:
+ols_deps()
+## End(Not run)
+```
+
+ols_fpe Final prediction error
+#### Description
+Estimated mean square error of prediction.
+#### Usage
+ols_fpe(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Computes the estimated mean square error of prediction for each model selected assuming that the
+#### Values of the regressors are fixed and that the model is correct.
+MSE((n + p)=n)
+where MSE = SSE=(n 􀀀 p), n is the sample size and p is the number of predictors including the
+intercept
+#### Value
+Final prediction error of the model.
+References
+Akaike, H. (1969). “Fitting Autoregressive Models for Prediction.” Annals of the Institute of Statistical
+Mathematics 21:243–247.
+Judge, G. G., Griffiths, W. E., Hill, R. C., and Lee, T.-C. (1980). The Theory and Practice of
+Econometrics. New York: John Wiley & Sons.
+See Also
+Other model selection criteria: ols_aic, ols_apc, ols_hsp, ols_mallows_cp, ols_msep, ols_sbc,
+ols_sbic
+#### Examples
+```{r}
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_fpe(model)
+```
+
+ols_hadi Hadi’s influence measure
+#### Description
+Measure of influence based on the fact that influential observations in either the response variable
+or in the predictors or both.
+#### Usage
+ols_hadi(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#### Value
+Hadi’s measure of the model.
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+See Also
+Other influence measures: ols_leverage, ols_pred_rsq, ols_press
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_hadi(model)
+ols_hsp Hocking’s Sp
+#### Description
+Average prediction mean squared error.
+#### Usage
+ols_hsp(model)
+ols_launch_app 13
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Hocking’s Sp criterion is an adjustment of the residual sum of Squares. Minimize this criterion.
+MSE=(n 􀀀 p 􀀀 1)
+where MSE = SSE=(n 􀀀 p), n is the sample size and p is the number of predictors including the
+intercept
+#### Value
+Hocking’s Sp of the model.
+References
+Hocking, R. R. (1976). “The Analysis and Selection of Variables in a Linear Regression.” Biometrics
+32:1–50.
+See Also
+Other model selection criteria: ols_aic, ols_apc, ols_fpe, ols_mallows_cp, ols_msep, ols_sbc,
+ols_sbic
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_hsp(model)
+ols_launch_app Launch shiny app
+#### Description
+Launches shiny app for interactive model building.
+#### Usage
+ols_launch_app()
+#### Examples
+## Not run:
+ols_launch_app()
+## End(Not run)
+14 ols_mallows_cp
+ols_leverage Leverage
+#### Description
+The leverage of an observation is based on how much the observation’s #### Value on the predictor
+variable differs from the mean of the predictor variable. The greater an observation’s leverage, the
+more potential it has to be an influential observation.
+#### Usage
+ols_leverage(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#### Value
+Leverage of the model.
+References
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+See Also
+Other influence measures: ols_hadi, ols_pred_rsq, ols_press
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_leverage(model)
+ols_mallows_cp Mallow’s Cp
+#### Description
+Mallow’s Cp.
+#### Usage
+ols_mallows_cp(model, fullmodel)
+ols_msep 15
+#### Arguments 
+* ``model``: An object of class lm.
+full* ``model``: An object of class lm.
+Details
+Mallows’ Cp statistic estimates the size of the bias that is introduced into the predicted responses by
+having an underspecified model. Use Mallows’ Cp to choose between multiple regression models.
+Look for models where Mallows’ Cp is small and close to the number of predictors in the model
+plus the constant (p).
+#### Value
+Mallow’s Cp of the model.
+References
+Hocking, R. R. (1976). “The Analysis and Selection of Variables in a Linear Regression.” Biometrics
+32:1–50.
+Mallows, C. L. (1973). “Some Comments on Cp.” Technometrics 15:661–675.
+See Also
+Other model selection criteria: ols_aic, ols_apc, ols_fpe, ols_hsp, ols_msep, ols_sbc, ols_sbic
+#### Examples
+full_model <- lm(mpg ~ ., data = mtcars)
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_mallows_cp(model, full_model)
+ols_msep MSEP
+#### Description
+Estimated error of prediction, assuming multivariate normality.
+#### Usage
+ols_msep(model)
+#### Arguments 
+* ``model``: An object of class lm.
+16 ols_plot_added_variable
+Details
+Computes the estimated mean square error of prediction assuming that both independent and dependent
+variables are multivariate normal.
+MSE(n + 1)(n 􀀀 2)=n(n 􀀀 p 􀀀 1)
+where MSE = SSE=(n 􀀀 p), n is the sample size and p is the number of predictors including the
+intercept
+#### Value
+Estimated error of prediction of the model.
+References
+Stein, C. (1960). “Multiple Regression.” In Contributions to Probability and Statistics: Essays in
+Honor of Harold Hotelling, edited by I. Olkin, S. G. Ghurye, W. Hoeffding, W. G. Madow, and H.
+B. Mann, 264–305. Stanford, CA: Stanford University Press.
+Darlington, R. B. (1968). “Multiple Regression in Psychological Research and Practice.” Psychological
+Bulletin 69:161–182.
+See Also
+Other model selection criteria: ols_aic, ols_apc, ols_fpe, ols_hsp, ols_mallows_cp, ols_sbc,
+ols_sbic
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_msep(model)
+ols_plot_added_variable
+Added variable plots
+#### Description
+Added variable plot provides information about the marginal importance of a predictor variable,
+given the other predictor variables already in the model. It shows the marginal importance of the
+variable in reducing the residual variability.
+#### Usage
+ols_plot_added_variable(model)
+ols_plot_added_variable 17
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+The added variable plot was introduced by Mosteller and Tukey (1977). It enables us to visualize
+the regression coefficient of a new variable being considered to be included in a model. The plot
+can be constructed for each predictor variable.
+Let us assume we want to test the effect of adding/removing variable X from a model. Let the
+response variable of the model be Y
+Steps to construct an added variable plot:
+• Regress Y on all variables other than X and store the residuals (Y residuals).
+• Regress X on all the other variables included in the model (X residuals).
+• Construct a scatter plot of Y residuals and X residuals.
+What do the Y and X residuals represent? The Y residuals represent the part of Y not explained
+by all the variables other than X. The X residuals represent the part of X not explained by other
+variables. The slope of the line fitted to the points in the added variable plot is equal to the regression
+coefficient when Y is regressed on all variables including X.
+A strong linear relationship in the added variable plot indicates the increased importance of the
+contribution of X to the model already containing the other predictors.
+Deprecated Function
+ols_avplots() has been deprecated. Instead use ols_plot_added_variable().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+See Also
+[ols_plot_resid_regressor()], [ols_plot_comp_plus_resid()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_added_variable(model)
+18 ols_plot_comp_plus_resid
+ols_plot_comp_plus_resid
+Residual plus component plot
+#### Description
+The residual plus component plot indicates whether any non-linearity is present in the relationship
+between response and predictor variables and can suggest possible transformations for linearizing
+the data.
+#### Usage
+ols_plot_comp_plus_resid(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_rpc_plot() has been deprecated. Instead use ols_plot_comp_plus_resid().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+See Also
+[ols_plot_added_variable()], [ols_plot_resid_regressor()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_plot_comp_plus_resid(model)
+ols_plot_cooksd_bar 19
+ols_plot_cooksd_bar Cooks’ D bar plot
+#### Description
+Bar Plot of cook’s distance to detect observations that strongly influence fitted #### Values of the model.
+#### Usage
+ols_plot_cooksd_bar(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Cook’s distance was introduced by American statistician R Dennis Cook in 1977. It is used to
+identify influential data points. It depends on both the residual and leverage i.e it takes it account
+both the x #### Value and y #### Value of the observation.
+Steps to compute Cook’s distance:
+• Delete observations one at a time.
+• Refit the regression model on remaining n 􀀀 1 observations
+• examine how much all of the fitted #### Values change when the ith observation is deleted.
+A data point having a large cook’s d indicates that the data point strongly influences the fitted #### Values.
+#### Value
+ols_plot_cooksd_bar returns a list containing the following components:
+outliers a tibble with observation number and cooks distance that exceed threshold
+threshold threshold for classifying an observation as an outlier
+Deprecated Function
+ols_cooksd_barplot() has been deprecated. Instead use ols_plot_cooksd_bar().
+See Also
+[ols_plot_cooksd_chart()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_cooksd_bar(model)
+20 ols_plot_cooksd_chart
+ols_plot_cooksd_chart Cooks’ D chart
+#### Description
+Chart of cook’s distance to detect observations that strongly influence fitted #### Values of the model.
+#### Usage
+ols_plot_cooksd_chart(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Cook’s distance was introduced by American statistician R Dennis Cook in 1977. It is used to
+identify influential data points. It depends on both the residual and leverage i.e it takes it account
+both the x #### Value and y #### Value of the observation.
+Steps to compute Cook’s distance:
+• Delete observations one at a time.
+• Refit the regression model on remaining n 􀀀 1 observations
+• exmine how much all of the fitted #### Values change when the ith observation is deleted.
+A data point having a large cook’s d indicates that the data point strongly influences the fitted #### Values.
+#### Value
+ols_plot_cooksd_chart returns a list containing the following components:
+outliers a tibble with observation number and cooks distance that exceed threshold
+threshold threshold for classifying an observation as an outlier
+Deprecated Function
+ols_cooksd_chart() has been deprecated. Instead use ols_plot_cooksd_chart().
+See Also
+[ols_plot_cooksd_bar()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_cooksd_chart(model)
+ols_plot_dfbetas 21
+ols_plot_dfbetas DFBETAs panel
+#### Description
+Panel of plots to detect influential observations using DFBETAs.
+#### Usage
+ols_plot_dfbetas(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+DFBETA measures the difference in each parameter estimate with and without the influential point.
+There is a DFBETA for each data point i.e if there are n observations and k variables, there will be
+n  k DFBETAs. In general, large #### Values of DFBETAS indicate observations that are influential in
+estimating a given parameter. Belsley, Kuh, and Welsch recommend 2 as a general cutoff #### Value to
+indicate influential observations and 2=
+p
+(n) as a size-adjusted cutoff.
+#### Value
+list; ols_plot_dfbetas returns a list of tibbles (for intercept and each predictor) with the observation
+number and DFBETA of observations that exceed the threshold for classifying an observation
+as an outlier/influential observation.
+Deprecated Function
+ols_dfbetas_panel() has been deprecated. Instead use ols_plot_dfbetas().
+References
+Belsley, David A.; Kuh, Edwin; Welsh, Roy E. (1980). Regression Diagnostics: Identifying Influential
+Data and Sources of Collinearity.
+Wiley Series in Probability and Mathematical Statistics. New York: John Wiley & Sons. pp. ISBN
+0-471-05856-4.
+See Also
+[ols_plot_dffits()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_plot_dfbetas(model)
+22 ols_plot_dffits
+ols_plot_dffits DFFITS plot
+#### Description
+Plot for detecting influential observations using DFFITs.
+#### Usage
+ols_plot_dffits(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+DFFIT - difference in fits, is used to identify influential data points. It quantifies the number of
+standard deviations that the fitted #### Value changes when the ith data point is omitted.
+Steps to compute DFFITs:
+• Delete observations one at a time.
+• Refit the regression model on remaining n 􀀀 1 observations
+• examine how much all of the fitted #### Values change when the ith observation is deleted.
+An observation is deemed influential if the absolute #### Value of its DFFITS #### Value is greater than:
+2
+p
+(p + 1)=(n 􀀀 p 􀀀 1)
+where n is the number of observations and p is the number of predictors including intercept.
+#### Value
+ols_plot_dffits returns a list containing the following components:
+outliers a tibble with observation number and DFFITs that exceed threshold
+threshold threshold for classifying an observation as an outlier
+Deprecated Function
+ols_dffits_plot() has been deprecated. Instead use ols_plot_dffits().
+References
+Belsley, David A.; Kuh, Edwin; Welsh, Roy E. (1980). Regression Diagnostics: Identifying Influential
+Data and Sources of Collinearity.
+Wiley Series in Probability and Mathematical Statistics. New York: John Wiley & Sons. ISBN
+0-471-05856-4.
+ols_plot_diagnostics 23
+See Also
+[ols_plot_dfbetas()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_plot_dffits(model)
+ols_plot_diagnostics Diagnostics panel
+#### Description
+Panel of plots for regression diagnostics.
+#### Usage
+ols_plot_diagnostics(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#’ @section Deprecated Function: ols_diagnostic_panel() has been deprecated.
+Instead use ols_plot_diagnostics().
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_plot_diagnostics(model)
+ols_plot_hadi Hadi plot
+#### Description
+Hadi’s measure of influence based on the fact that influential observations can be present in either
+the response variable or in the predictors or both. The plot is used to detect influential observations
+based on Hadi’s measure.
+#### Usage
+ols_plot_hadi(model)
+24 ols_plot_obs_fit
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_hadi_plot() has been deprecated. Instead use ols_plot_hadi().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+See Also
+[ols_plot_resid_pot()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_hadi(model)
+ols_plot_obs_fit Observed vs fitted #### Values plot
+#### Description
+Plot of observed vs fitted #### Values to assess the fit of the model.
+#### Usage
+ols_plot_obs_fit(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Ideally, all your points should be close to a regressed diagonal line. Draw such a diagonal line
+within your graph and check out where the points lie. If your model had a high R Square, all the
+points would be close to this diagonal line. The lower the R Square, the weaker the Goodness of fit
+of your model, the more foggy or dispersed your points are from this diagonal line.
+Deprecated Function
+ols_ovsp_plot() has been deprecated. Instead use ols_plot_obs_fit().
+ols_plot_reg_line 25
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_obs_fit(model)
+ols_plot_reg_line Simple linear regression line
+#### Description
+Plot to demonstrate that the regression line always passes through mean of the response and predictor
+variables.
+#### Usage
+ols_plot_reg_line(response, predictor)
+#### Arguments 
+response Response variable.
+predictor Predictor variable.
+Deprecated Function
+ols_reg_line() has been deprecated. Instead use ols_plot_reg_line().
+#### Examples
+ols_plot_reg_line(mtcars$mpg, mtcars$disp)
+ols_plot_resid_box Residual box plot
+#### Description
+Box plot of residuals to examine if residuals are normally distributed.
+#### Usage
+ols_plot_resid_box(model)
+#### Arguments 
+* ``model``: An object of class lm.
+26 ols_plot_resid_fit
+Deprecated Function
+ols_rsd_boxplot() has been deprecated. Instead use ols_plot_resid_box().
+See Also
+Other residual diagnostics: ols_plot_resid_fit, ols_plot_resid_hist, ols_plot_resid_qq,
+ols_test_correlation, ols_test_normality
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_box(model)
+ols_plot_resid_fit Residual vs fitted plot
+#### Description
+Scatter plot of residuals on the y axis and fitted #### Values on the x axis to detect non-linearity, unequal
+error variances, and outliers.
+#### Usage
+ols_plot_resid_fit(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Characteristics of a well behaved residual vs fitted plot:
+• The residuals spread randomly around the 0 line indicating that the relationship is linear.
+• The residuals form an approximate horizontal band around the 0 line indicating homogeneity
+of error variance.
+• No one residual is visibly away from the random pattern of the residuals indicating that there
+are no outliers.
+Deprecated Function
+ols_rvsp_plot() has been deprecated. Instead use ols_plot_resid_fit().
+See Also
+Other residual diagnostics: ols_plot_resid_box, ols_plot_resid_hist, ols_plot_resid_qq,
+ols_test_correlation, ols_test_normality
+ols_plot_resid_fit_spread 27
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_fit(model)
+ols_plot_resid_fit_spread
+Residual fit spread plot
+#### Description
+Plot to detect non-linearity, influential observations and outliers.
+#### Usage
+ols_plot_resid_fit_spread(model)
+ols_plot_fm(model)
+ols_plot_resid_spread(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Consists of side-by-side quantile plots of the centered fit and the residuals. It shows how much
+variation in the data is explained by the fit and how much remains in the residuals. For inappropriate
+models, the spread of the residuals in such a plot is often greater than the spread of the centered fit.
+Deprecated Function
+ols_rfs_plot(), ols_fm_plot() and ols_rsd_plot() has been deprecated. Instead use ols_plot_resid_fit_spread(),
+ols_plot_fm() and ols_plot_resid_spread().
+References
+Cleveland, W. S. (1993). Visualizing Data. Summit, NJ: Hobart Press.
+#### Examples
+# model
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+# residual fit spread plot
+ols_plot_resid_fit_spread(model)
+28 ols_plot_resid_hist
+# fit mean plot
+ols_plot_fm(model)
+# residual spread plot
+ols_plot_resid_spread(model)
+ols_plot_resid_hist Residual histogram
+#### Description
+Histogram of residuals for detecting violation of normality assumption.
+#### Usage
+ols_plot_resid_hist(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_rsd_hist() has been deprecated. Instead use ols_plot_resid_hist().
+See Also
+Other residual diagnostics: ols_plot_resid_box, ols_plot_resid_fit, ols_plot_resid_qq,
+ols_test_correlation, ols_test_normality
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_hist(model)
+ols_plot_resid_lev 29
+ols_plot_resid_lev Studentized residuals vs leverage plot
+#### Description
+Graph for detecting outliers and/or observations with high leverage.
+#### Usage
+ols_plot_resid_lev(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_rsdlev_plot() has been deprecated. Instead use ols_plot_resid_lev().
+See Also
+[ols_plot_resid_stud_fit()], [ols_plot_resid_lev()]
+#### Examples
+model <- lm(read ~ write + math + science, data = hsb)
+ols_plot_resid_lev(model)
+ols_plot_resid_pot Potential residual plot
+#### Description
+Plot to aid in classifying unusual observations as high-leverage points, outliers, or a combination of
+both.
+#### Usage
+ols_plot_resid_pot(model)
+#### Arguments 
+* ``model``: An object of class lm.
+30 ols_plot_resid_qq
+Deprecated Function
+ols_potrsd_plot() has been deprecated. Instead use ols_plot_resid_pot().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+See Also
+[ols_plot_hadi()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_pot(model)
+ols_plot_resid_qq Residual QQ plot
+#### Description
+Graph for detecting violation of normality assumption.
+#### Usage
+ols_plot_resid_qq(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_rsd_qqplot() has been deprecated. Instead use ols_plot_resid_qq().
+See Also
+Other residual diagnostics: ols_plot_resid_box, ols_plot_resid_fit, ols_plot_resid_hist,
+ols_test_correlation, ols_test_normality
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_qq(model)
+ols_plot_resid_regressor 31
+ols_plot_resid_regressor
+Residual vs regressor plot
+#### Description
+Graph to determine whether we should add a new predictor to the model already containing other
+predictors. The residuals from the model is regressed on the new predictor and if the plot shows
+non random pattern, you should consider adding the new predictor to the model.
+#### Usage
+ols_plot_resid_regressor(model, variable)
+#### Arguments 
+* ``model``: An object of class lm.
+variable New predictor to be added to the model.
+Deprecated Function
+ols_rvsr_plot() has been deprecated. Instead use ols_plot_resid_regressor().
+See Also
+[ols_plot_added_variable()], [ols_plot_comp_plus_resid()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_regressor(model, drat)
+ols_plot_resid_stand Standardized residual chart
+#### Description
+Chart for identifying outliers.
+#### Usage
+ols_plot_resid_stand(model)
+#### Arguments 
+* ``model``: An object of class lm.
+32 ols_plot_resid_stud
+Details
+Standardized residual (internally studentized) is the residual divided by estimated standard deviation.
+#### Value
+ols_plot_resid_stand returns a list containing the following components:
+outliers a tibble with observation number and standardized resiudals that exceed
+threshold
+for classifying an observation as an outlier
+threshold threshold for classifying an observation as an outlier
+Deprecated Function
+ols_srsd_chart() has been deprecated. Instead use ols_plot_resid_stand().
+See Also
+[ols_plot_resid_stud()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_stand(model)
+ols_plot_resid_stud Studentized residual plot
+#### Description
+Graph for identifying outliers.
+#### Usage
+ols_plot_resid_stud(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Studentized deleted residuals (or externally studentized residuals) is the deleted residual divided by
+its estimated standard deviation. Studentized residuals are going to be more effective for detecting
+outlying Y observations than standardized residuals. If an observation has an externally studentized
+residual that is larger than 3 (in absolute #### Value) we can call it an outlier.
+ols_plot_resid_stud_fit 33
+#### Value
+ols_plot_resid_stud returns a list containing the following components:
+outliers a tibble with observation number and studentized residuals that exceed
+threshold
+for classifying an observation as an outlier
+threshold threshold for classifying an observation as an outlier
+Deprecated Function
+ols_srsd_plot() has been deprecated. Instead use ols_plot_resid_stud().
+See Also
+[ols_plot_resid_stand()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_resid_stud(model)
+ols_plot_resid_stud_fit
+Deleted studentized residual vs fitted #### Values plot
+#### Description
+Plot for detecting violation of assumptions about residuals such as non-linearity, constant variances
+and outliers. It can also be used to examine model fit.
+#### Usage
+ols_plot_resid_stud_fit(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Details
+Studentized deleted residuals (or externally studentized residuals) is the deleted residual divided by
+its estimated standard deviation. Studentized residuals are going to be more effective for detecting
+outlying Y observations than standardized residuals. If an observation has an externally studentized
+residual that is larger than 2 (in absolute #### Value) we can call it an outlier.
+34 ols_plot_response
+#### Value
+ols_plot_resid_stud_fit returns a list containing the following components:
+outliers a tibble with observation number, fitted #### Values and deleted studentized residuals
+that exceed the threshold for classifying observations as outliers/influential
+observations
+threshold threshold for classifying an observation as an outlier/influential observation
+Deprecated Function
+ols_dsrvsp_plot() has been deprecated. Instead use ols_plot_resid_stud_fit().
+See Also
+[ols_plot_resid_lev()], [ols_plot_resid_stand()], [ols_plot_resid_stud()]
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_plot_resid_stud_fit(model)
+ols_plot_response Response variable profile
+#### Description
+Panel of plots to explore and visualize the response variable.
+#### Usage
+ols_plot_response(model)
+#### Arguments 
+* ``model``: An object of class lm.
+Deprecated Function
+ols_resp_viz() has been deprecated. Instead use ols_plot_response().
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_plot_response(model)
+ols_pred_rsq 35
+ols_pred_rsq Predicted rsquare
+#### Description
+Use predicted rsquared to determine how well the model predicts responses for new observations.
+Larger #### Values of predicted R2 indicate models of greater predictive ability.
+#### Usage
+ols_pred_rsq(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#### Value
+Predicted rsquare of the model.
+See Also
+Other influence measures: ols_hadi, ols_leverage, ols_press
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_pred_rsq(model)
+ols_prep_avplot_data Added variable plot data
+#### Description
+Data for generating the added variable plots.
+#### Usage
+ols_prep_avplot_data(model)
+#### Arguments 
+* ``model``: An object of class lm.
+36 ols_prep_cdplot_outliers
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_prep_avplot_data(model)
+ols_prep_cdplot_data Cooks’ D plot data
+#### Description
+Prepare data for cook’s d bar plot.
+#### Usage
+ols_prep_cdplot_data(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+ols_prep_cdplot_data(model)
+ols_prep_cdplot_outliers
+Cooks’ d outlier data
+#### Description
+Outlier data for cook’s d bar plot.
+#### Usage
+ols_prep_cdplot_outliers(k)
+#### Arguments 
+k Cooks’ d bar plot data.
+#### Examples
+model <- lm(mpg ~ disp + hp + wt, data = mtcars)
+k <- ols_prep_cdplot_data(model)
+ols_prep_cdplot_outliers(k)
+ols_prep_dfbeta_data 37
+ols_prep_dfbeta_data DFBETAs plot data
+#### Description
+Prepares the data for dfbetas plot.
+#### Usage
+ols_prep_dfbeta_data(d, threshold)
+#### Arguments 
+d A tibble or data.frame with dfbetas.
+threshold The threshold for outliers.
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+dfb <- dfbetas(model)
+n <- nrow(dfb)
+threshold <- 2 / sqrt(n)
+dbetas <- dfb[, 1]
+df_data <- tibble::tibble(obs = seq_len(n), dbetas = dbetas)
+ols_prep_dfbeta_data(df_data, threshold)
+ols_prep_dfbeta_outliers
+DFBETAs plot outliers
+#### Description
+Data for identifying outliers in dfbetas plot.
+#### Usage
+ols_prep_dfbeta_outliers(d)
+#### Arguments 
+d A tibble or data.frame.
+38 ols_prep_outlier_obs
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+dfb <- dfbetas(model)
+n <- nrow(dfb)
+threshold <- 2 / sqrt(n)
+dbetas <- dfb[, 1]
+df_data <- tibble::tibble(obs = seq_len(n), dbetas = dbetas)
+d <- ols_prep_dfbeta_data(df_data, threshold)
+ols_prep_dfbeta_outliers(d)
+
+
+
+
+
+ols
+ols_step_backward_aic Stepwise AIC backward regression
+#### Description
+Build regression model from a set of candidate predictor variables by removing predictors based
+on akaike information criterion, in a stepwise manner until there is no variable left to remove any
+more.
+#### Usage
+ols_step_backward_aic(model, ...)
+## Default S3 method:
+ols_step_backward_aic(model, details = FALSE, ...)
+## S3 method for class 'ols_step_backward_aic'
+plot(x, ...)
+52 ols_step_backward_aic
+#### Arguments 
+model An object of class lm; the model should include all candidate predictor variables.
+... Other #### Arguments .
+details Logical; if TRUE, will print the regression result at each step.
+x An object of class ols_step_backward_aic.
+#### Value
+ols_step_backward_aic returns an object of class "ols_step_backward_aic". An object of
+class "ols_step_backward_aic" is a list containing the following components:
+model model with the least AIC; an object of class lm
+steps total number of steps
+predictors variables removed from the model
+aics akaike information criteria
+ess error sum of squares
+rss regression sum of squares
+rsq rsquare
+arsq adjusted rsquare
+Deprecated Function
+ols_stepaic_backward() has been deprecated. Instead use ols_step_backward_aic().
+References
+Venables,W. N. and Ripley, B. D. (2002) Modern Applied Statistics with S. Fourth edition. Springer.
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_p, ols_step_best_subset,
+ols_step_both_aic, ols_step_forward_aic, ols_step_forward_p
+#### Examples
+# stepwise backward regression
+model <- lm(y ~ ., data = surgical)
+ols_step_backward_aic(model)
+# stepwise backward regression plot
+model <- lm(y ~ ., data = surgical)
+k <- ols_step_backward_aic(model)
+plot(k)
+# final model
+k$model
+ols_step_backward_p 53
+ols_step_backward_p Stepwise backward regression
+#### Description
+Build regression model from a set of candidate predictor variables by removing predictors based on
+p #### Values, in a stepwise manner until there is no variable left to remove any more.
+#### Usage
+ols_step_backward_p(model, ...)
+## Default S3 method:
+ols_step_backward_p(model, prem = 0.3, details = FALSE,
+...)
+## S3 method for class 'ols_step_backward_p'
+plot(x, model = NA, ...)
+#### Arguments 
+model An object of class lm; the model should include all candidate predictor variables.
+... Other inputs.
+prem p #### Value; variables with p more than prem will be removed from the model.
+details Logical; if TRUE, will print the regression result at each step.
+x An object of class ols_step_backward_p.
+#### Value
+ols_step_backward_p returns an object of class "ols_step_backward_p". An object of class
+"ols_step_backward_p" is a list containing the following components:
+model final model; an object of class lm
+steps total number of steps
+removed variables removed from the model
+rsquare coefficient of determination
+aic akaike information criteria
+sbc bayesian information criteria
+sbic sawa’s bayesian information criteria
+adjr adjusted r-square
+rmse root mean square error
+mallows_cp mallow’s Cp
+indvar predictors
+54 ols_step_best_subset
+Deprecated Function
+ols_step_backward() has been deprecated. Instead use ols_step_backward_p().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_aic, ols_step_best_subset,
+ols_step_both_aic, ols_step_forward_aic, ols_step_forward_p
+#### Examples
+# stepwise backward regression
+model <- lm(y ~ ., data = surgical)
+ols_step_backward_p(model)
+# stepwise backward regression plot
+model <- lm(y ~ ., data = surgical)
+k <- ols_step_backward_p(model)
+plot(k)
+# final model
+k$model
+ols_step_best_subset Best subsets regression
+#### Description
+Select the subset of predictors that do the best at meeting some well-defined objective criterion,
+such as having the largest R2 #### Value or the smallest MSE, Mallow’s Cp or AIC.
+#### Usage
+ols_step_best_subset(model, ...)
+## S3 method for class 'ols_step_best_subset'
+plot(x, model = NA, ...)
+#### Arguments 
+* ``model``: An object of class lm.
+... Other inputs.
+x An object of class ols_step_best_subset.
+ols_step_best_subset 55
+#### Value
+ols_step_best_subset returns an object of class "ols_step_best_subset". An object of class
+"ols_step_best_subset" is a data frame containing the following components:
+n model number
+predictors predictors in the model
+rsquare rsquare of the model
+adjr adjusted rsquare of the model
+predrsq predicted rsquare of the model
+cp mallow’s Cp
+aic akaike information criteria
+sbic sawa bayesian information criteria
+sbc schwarz bayes information criteria
+gmsep estimated MSE of prediction, assuming multivariate normality
+jp final prediction error
+pc amemiya prediction criteria
+sp hocking’s Sp
+Deprecated Function
+ols_best_subset() has been deprecated. Instead use ols_step_best_subset().
+References
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_aic, ols_step_backward_p,
+ols_step_both_aic, ols_step_forward_aic, ols_step_forward_p
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_step_best_subset(model)
+# plot
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+k <- ols_step_best_subset(model)
+plot(k)
+56 ols_step_both_aic
+ols_step_both_aic Stepwise AIC regression
+#### Description
+Build regression model from a set of candidate predictor variables by entering and removing predictors
+based on akaike information criteria, in a stepwise manner until there is no variable left to
+enter or remove any more.
+#### Usage
+ols_step_both_aic(model, details = FALSE)
+## S3 method for class 'ols_step_both_aic'
+plot(x, ...)
+#### Arguments 
+* ``model``: An object of class lm.
+details Logical; if TRUE, details of variable selection will be printed on screen.
+x An object of class ols_step_both_aic.
+... Other #### Arguments .
+#### Value
+ols_step_both_aic returns an object of class "ols_step_both_aic". An object of class "ols_step_both_aic"
+is a list containing the following components:
+model model with the least AIC; an object of class lm
+predictors variables added/removed from the model
+method addition/deletion
+aics akaike information criteria
+ess error sum of squares
+rss regression sum of squares
+rsq rsquare
+arsq adjusted rsquare
+steps total number of steps
+Deprecated Function
+ols_stepaic_both() has been deprecated. Instead use ols_step_both_aic().
+References
+Venables,W. N. and Ripley, B. D. (2002) Modern Applied Statistics with S. Fourth edition. Springer.
+ols_step_both_p 57
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_aic, ols_step_backward_p,
+ols_step_best_subset, ols_step_forward_aic, ols_step_forward_p
+#### Examples
+## Not run:
+# stepwise regression
+model <- lm(y ~ ., data = stepdata)
+ols_step_both_aic(model)
+# stepwise regression plot
+model <- lm(y ~ ., data = stepdata)
+k <- ols_step_both_aic(model)
+plot(k)
+# final model
+k$model
+## End(Not run)
+ols_step_both_p Stepwise regression
+#### Description
+Build regression model from a set of candidate predictor variables by entering and removing predictors
+based on p #### Values, in a stepwise manner until there is no variable left to enter or remove any
+more.
+#### Usage
+ols_step_both_p(model, ...)
+## Default S3 method:
+ols_step_both_p(model, pent = 0.1, prem = 0.3,
+details = FALSE, ...)
+## S3 method for class 'ols_step_both_p'
+plot(x, model = NA, ...)
+#### Arguments 
+model An object of class lm; the model should include all candidate predictor variables.
+... Other #### Arguments .
+pent p #### Value; variables with p #### Value less than pent will enter into the model.
+58 ols_step_both_p
+prem p #### Value; variables with p more than prem will be removed from the model.
+details Logical; if TRUE, will print the regression result at each step.
+x An object of class ols_step_both_p.
+#### Value
+ols_step_both_p returns an object of class "ols_step_both_p". An object of class "ols_step_both_p"
+is a list containing the following components:
+model final model; an object of class lm
+orders candidate predictor variables according to the order by which they were added
+or removed from the model
+method addition/deletion
+steps total number of steps
+predictors variables retained in the model (after addition)
+rsquare coefficient of determination
+aic akaike information criteria
+sbc bayesian information criteria
+sbic sawa’s bayesian information criteria
+adjr adjusted r-square
+rmse root mean square error
+mallows_cp mallow’s Cp
+indvar predictors
+Deprecated Function
+ols_stepwise() has been deprecated. Instead use ols_step_both_p().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+#### Examples
+# stepwise regression
+model <- lm(y ~ ., data = surgical)
+ols_step_both_p(model)
+# stepwise regression plot
+model <- lm(y ~ ., data = surgical)
+k <- ols_step_both_p(model)
+plot(k)
+# final model
+k$model
+ols_step_forward_aic 59
+ols_step_forward_aic Stepwise AIC forward regression
+#### Description
+Build regression model from a set of candidate predictor variables by entering predictors based on
+akaike information criterion, in a stepwise manner until there is no variable left to enter any more.
+#### Usage
+ols_step_forward_aic(model, ...)
+## Default S3 method:
+ols_step_forward_aic(model, details = FALSE, ...)
+## S3 method for class 'ols_step_forward_aic'
+plot(x, ...)
+#### Arguments 
+* ``model``: An object of class lm.
+... Other #### Arguments .
+details Logical; if TRUE, will print the regression result at each step.
+x An object of class ols_step_forward_aic.
+#### Value
+ols_step_forward_aic returns an object of class "ols_step_forward_aic". An object of class
+"ols_step_forward_aic" is a list containing the following components:
+model model with the least AIC; an object of class lm
+steps total number of steps
+predictors variables added to the model
+aics akaike information criteria
+ess error sum of squares
+rss regression sum of squares
+rsq rsquare
+arsq adjusted rsquare
+Deprecated Function
+ols_stepaic_forward() has been deprecated. Instead use ols_step_forward_aic().
+60 ols_step_forward_p
+References
+Venables,W. N. and Ripley, B. D. (2002) Modern Applied Statistics with S. Fourth edition. Springer.
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_aic, ols_step_backward_p,
+ols_step_best_subset, ols_step_both_aic, ols_step_forward_p
+#### Examples
+# stepwise forward regression
+model <- lm(y ~ ., data = surgical)
+ols_step_forward_aic(model)
+# stepwise forward regression plot
+model <- lm(y ~ ., data = surgical)
+k <- ols_step_forward_aic(model)
+plot(k)
+# final model
+k$model
+ols_step_forward_p Stepwise forward regression
+#### Description
+Build regression model from a set of candidate predictor variables by entering predictors based on
+p #### Values, in a stepwise manner until there is no variable left to enter any more.
+#### Usage
+ols_step_forward_p(model, ...)
+## Default S3 method:
+ols_step_forward_p(model, penter = 0.3, details = FALSE,
+...)
+## S3 method for class 'ols_step_forward_p'
+plot(x, model = NA, ...)
+#### Arguments 
+model An object of class lm; the model should include all candidate predictor variables.
+... Other #### Arguments .
+penter p #### Value; variables with p #### Value less than penter will enter into the model
+details Logical; if TRUE, will print the regression result at each step.
+x An object of class ols_step_forward_p.
+ols_step_forward_p 61
+#### Value
+ols_step_forward_p returns an object of class "ols_step_forward_p". An object of class "ols_step_forward_p"
+is a list containing the following components:
+model final model; an object of class lm
+steps number of steps
+predictors variables added to the model
+rsquare coefficient of determination
+aic akaike information criteria
+sbc bayesian information criteria
+sbic sawa’s bayesian information criteria
+adjr adjusted r-square
+rmse root mean square error
+mallows_cp mallow’s Cp
+indvar predictors
+Deprecated Function
+ols_step_forward() has been deprecated. Instead use ols_step_forward_p().
+References
+Chatterjee, Samprit and Hadi, Ali. Regression Analysis by Example. 5th ed. N.p.: John Wiley &
+Sons, 2012. Print.
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+See Also
+Other variable selection procedures: ols_step_all_possible, ols_step_backward_aic, ols_step_backward_p,
+ols_step_best_subset, ols_step_both_aic, ols_step_forward_aic
+#### Examples
+# stepwise forward regression
+model <- lm(y ~ ., data = surgical)
+ols_step_forward_p(model)
+# stepwise forward regression plot
+model <- lm(y ~ ., data = surgical)
+k <- ols_step_forward_p(model)
+plot(k)
+# final model
+k$model
+62 ols_test_bartlett
+ols_test_bartlett Bartlett test
+#### Description
+Test if k samples are from populations with equal variances.
+#### Usage
+ols_test_bartlett(data, ...)
+## Default S3 method:
+ols_test_bartlett(data, ..., group_var = NULL)
+#### Arguments 
+data A data.frame or tibble.
+... Columns in data.
+group_var Grouping variable.
+Details
+Bartlett’s test is used to test if variances across samples is equal. It is sensitive to departures from
+normality. The Levene test is an alternative test that is less sensitive to departures from normality.
+#### Value
+ols_test_bartlett returns an object of class "ols_test_bartlett". An object of class "ols_test_bartlett"
+is a list containing the following components:
+fstat f statistic
+pval p-#### Value of fstat
+df degrees of freedom
+Deprecated Function
+ols_bartlett_test() has been deprecated. Instead use ols_test_bartlett().
+References
+Snedecor, George W. and Cochran, William G. (1989), Statistical Methods, Eighth Edition, Iowa
+State University Press.
+See Also
+Other heteroskedasticity tests: ols_test_breusch_pagan, ols_test_f, ols_test_score
+ols_test_breusch_pagan 63
+#### Examples
+# using grouping variable
+library(descriptr)
+ols_test_bartlett(mtcarz, mpg, group_var = cyl)
+# using variables
+ols_test_bartlett(hsb, read, write)
+ols_test_breusch_pagan
+Breusch pagan test
+#### Description
+Test for constant variance. It assumes that the error terms are normally distributed.
+#### Usage
+ols_test_breusch_pagan(model, fitted.#### Values = TRUE, rhs = FALSE,
+multiple = FALSE, p.adj = c("none", "bonferroni", "sidak", "holm"),
+vars = NA)
+#### Arguments 
+* ``model``: An object of class lm.
+fitted.#### Values Logical; if TRUE, use fitted #### Values of regression model.
+rhs Logical; if TRUE, specifies that tests for heteroskedasticity be performed for the
+right-hand-side (explanatory) variables of the fitted regression model.
+multiple Logical; if TRUE, specifies that multiple testing be performed.
+p.adj Adjustment for p #### Value, the following options are available: bonferroni, holm,
+sidak and none.
+vars Variables to be used for heteroskedasticity test.
+Details
+Breusch Pagan Test was introduced by Trevor Breusch and Adrian Pagan in 1979. It is used to
+test for heteroskedasticity in a linear regression model. It test whether variance of errors from a
+regression is dependent on the #### Values of a independent variable.
+• Null Hypothesis: Equal/constant variances
+• Alternative Hypothesis: Unequal/non-constant variances
+Computation
+• Fit a regression model
+64 ols_test_breusch_pagan
+• Regress the squared residuals from the above model on the independent variables
+• Compute nR2. It follows a chi square distribution with p -1 degrees of freedom, where p is
+the number of independent variables, n is the sample size and R2 is the coefficient of determination
+from the regression in step 2.
+#### Value
+ols_test_breusch_pagan returns an object of class "ols_test_breusch_pagan". An object of
+class "ols_test_breusch_pagan" is a list containing the following components:
+bp breusch pagan statistic
+p p-#### Value of bp
+fv fitted #### Values of the regression model
+rhs names of explanatory variables of fitted regression model
+multiple logical #### Value indicating if multiple tests should be performed
+padj adjusted p #### Values
+vars variables to be used for heteroskedasticity test
+resp response variable
+preds predictors
+Deprecated Function
+ols_bp_test() has been deprecated. Instead use ols_test_breusch_pagan().
+References
+T.S. Breusch & A.R. Pagan (1979), A Simple Test for Heteroscedasticity and Random Coefficient
+Variation. Econometrica 47, 1287–1294
+Cook, R. D.; Weisberg, S. (1983). "Diagnostics for Heteroskedasticity in Regression". Biometrika.
+70 (1): 1–10.
+See Also
+Other heteroskedasticity tests: ols_test_bartlett, ols_test_f, ols_test_score
+#### Examples
+# model
+model <- lm(mpg ~ disp + hp + wt + drat, data = mtcars)
+# use fitted #### Values of the model
+ols_test_breusch_pagan(model)
+# use independent variables of the model
+ols_test_breusch_pagan(model, rhs = TRUE)
+# use independent variables of the model and perform multiple tests
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE)
+ols_test_correlation 65
+# bonferroni p #### Value adjustment
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'bonferroni')
+# sidak p #### Value adjustment
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'sidak')
+# holm's p #### Value adjustment
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'holm')
+ols_test_correlation Correlation test for normality
+#### Description
+Correlation between observed residuals and expected residuals under normality.
+#### Usage
+ols_test_correlation(model)
+#### Arguments 
+* ``model``: An object of class lm.
+#### Value
+Correlation between fitted regression model residuals and expected #### Values of residuals.
+Deprecated Function
+ols_corr_test() has been deprecated. Instead use ols_test_correlation().
+See Also
+Other residual diagnostics: ols_plot_resid_box, ols_plot_resid_fit, ols_plot_resid_hist,
+ols_plot_resid_qq, ols_test_normality
+#### Examples
+model <- lm(mpg ~ disp + hp + wt + qsec, data = mtcars)
+ols_test_correlation(model)
+66 ols_test_f
+
+
+stepdata Test Data Set
+#### Description
+Test Data Set
+#### Usage
+stepdata
+Format
+An object of class data.frame with 20000 rows and 7 columns.
+surgical Surgical Unit Data Set
+#### Description
+A dataset containing data about survival of patients undergoing liver operation.
+#### Usage
+surgical
+Format
+A data frame with 54 rows and 9 variables:
+bcs blood clotting score
+pindex prognostic index
+enzyme_test enzyme function test score
+liver_test liver function test score
+age age, in years
+gender indicator variable for gender (0 = male, 1 = female)
+alc_mod indicator variable for history of alcohol use (0 = None, 1 = Moderate)
+alc_heavy indicator variable for history of alcohol use (0 = None, 1 = Heavy)
+y Survival Time
+Source
+Kutner, MH, Nachtscheim CJ, Neter J and Li W., 2004, Applied Linear Statistical Models (5th
+edition). Chicago, IL., McGraw Hill/Irwin.
+Index
+Topic datasets
+auto, 3
+cement, 4
+fitness, 4
+hsb, 4
+rivers, 70
+stepdata, 71
+surgical, 71
+auto, 3
+cement, 4
+fitness, 4
+hsb, 4
+ols_aic, 5, 7, 11, 13, 15, 16, 47, 49
+ols_all_subset (ols_step_all_possible),
+49
+ols_all_subset_betas
+(ols_step_all_possible_betas),
+50
+ols_apc, 6, 6, 11, 13, 15, 16, 47, 49
+ols_avplots (ols_plot_added_variable),
+16
+ols_bartlett_test (ols_test_bartlett),
+62
+ols_best_subset (ols_step_best_subset),
+54
+ols_bp_test (ols_test_breusch_pagan), 63
+ols_coll_diag, 7
+ols_cooksd_barplot
+(ols_plot_cooksd_bar), 19
+ols_cooksd_chart
+(ols_plot_cooksd_chart), 20
+ols_corr_test (ols_test_correlation), 65
+ols_correlations, 9
+ols_deps, 10
+ols_dfbetas_panel (ols_plot_dfbetas), 21
+ols_dffits_plot (ols_plot_dffits), 22
+ols_diagnostic_panel
+(ols_plot_diagnostics), 23
+ols_dsrvsp_plot
+(ols_plot_resid_stud_fit), 33
+ols_eigen_cindex (ols_coll_diag), 7
+ols_f_test (ols_test_f), 66
+ols_fm_plot
+(ols_plot_resid_fit_spread), 27
+ols_fpe, 6, 7, 11, 13, 15, 16, 47, 49
+ols_hadi, 12, 14, 35, 43
+ols_hadi_plot (ols_plot_hadi), 23
+ols_hsp, 6, 7, 11, 12, 15, 16, 47, 49
+ols_launch_app, 13
+ols_leverage, 12, 14, 35, 43
+ols_mallows_cp, 6, 7, 11, 13, 14, 16, 47, 49
+ols_msep, 6, 7, 11, 13, 15, 15, 47, 49
+ols_norm_test (ols_test_normality), 67
+ols_ovsp_plot (ols_plot_obs_fit), 24
+ols_plot_added_variable, 16
+ols_plot_comp_plus_resid, 18
+ols_plot_cooksd_bar, 19
+ols_plot_cooksd_chart, 20
+ols_plot_dfbetas, 21
+ols_plot_dffits, 22
+ols_plot_diagnostics, 23
+ols_plot_fm
+(ols_plot_resid_fit_spread), 27
+ols_plot_hadi, 23
+ols_plot_obs_fit, 24
+ols_plot_reg_line, 25
+ols_plot_resid_box, 25, 26, 28, 30, 65, 68
+ols_plot_resid_fit, 26, 26, 28, 30, 65, 68
+ols_plot_resid_fit_spread, 27
+ols_plot_resid_hist, 26, 28, 30, 65, 68
+ols_plot_resid_lev, 29
+ols_plot_resid_pot, 29
+ols_plot_resid_qq, 26, 28, 30, 65, 68
+ols_plot_resid_regressor, 31
+ols_plot_resid_spread
+72
+INDEX 73
+(ols_plot_resid_fit_spread), 27
+ols_plot_resid_stand, 31
+ols_plot_resid_stud, 32
+ols_plot_resid_stud_fit, 33
+ols_plot_response, 34
+ols_potrsd_plot (ols_plot_resid_pot), 29
+ols_pred_rsq, 12, 14, 35, 43
+ols_prep_avplot_data, 35
+ols_prep_cdplot_data, 36
+ols_prep_cdplot_outliers, 36
+ols_prep_dfbeta_data, 37
+ols_prep_dfbeta_outliers, 37
+ols_prep_dsrvf_data, 38
+ols_prep_outlier_obs, 38
+ols_prep_regress_x, 39
+ols_prep_regress_y, 39
+ols_prep_rfsplot_fmdata, 40
+ols_prep_rfsplot_rsdata
+(ols_prep_rfsplot_fmdata), 40
+ols_prep_rstudlev_data, 40
+ols_prep_rvsrplot_data, 41
+ols_prep_srchart_data, 41
+ols_prep_srplot_data, 42
+ols_press, 12, 14, 35, 42
+ols_pure_error_anova, 43
+ols_reg_line (ols_plot_reg_line), 25
+ols_regress, 45
+ols_resp_viz (ols_plot_response), 34
+ols_rfs_plot
+(ols_plot_resid_fit_spread), 27
+ols_rpc_plot
+(ols_plot_comp_plus_resid), 18
+ols_rsd_boxplot (ols_plot_resid_box), 25
+ols_rsd_hist (ols_plot_resid_hist), 28
+ols_rsd_plot
+(ols_plot_resid_fit_spread), 27
+ols_rsd_qqplot (ols_plot_resid_qq), 30
+ols_rsdlev_plot (ols_plot_resid_lev), 29
+ols_rvsp_plot (ols_plot_resid_fit), 26
+ols_rvsr_plot
+(ols_plot_resid_regressor), 31
+ols_sbc, 6, 7, 11, 13, 15, 16, 47, 49
+ols_sbic, 6, 7, 11, 13, 15, 16, 47, 48
+ols_score_test (ols_test_score), 68
+ols_srsd_chart (ols_plot_resid_stand),
+31
+ols_srsd_plot (ols_plot_resid_stud), 32
+ols_step_all_possible, 49, 52, 54, 55, 57,
+60, 61
+ols_step_all_possible_betas, 50
+ols_step_backward
+(ols_step_backward_p), 53
+ols_step_backward_aic, 50, 51, 54, 55, 57,
+60, 61
+ols_step_backward_p, 50, 52, 53, 55, 57, 60,
+61
+ols_step_best_subset, 50, 52, 54, 54, 57,
+60, 61
+ols_step_both_aic, 50, 52, 54, 55, 56, 60, 61
+ols_step_both_p, 57
+ols_step_forward (ols_step_forward_p),
+60
+ols_step_forward_aic, 50, 52, 54, 55, 57,
+59, 61
+ols_step_forward_p, 50, 52, 54, 55, 57, 60,
+60
+ols_stepaic_backward
+(ols_step_backward_aic), 51
+ols_stepaic_both (ols_step_both_aic), 56
+ols_stepaic_forward
+(ols_step_forward_aic), 59
+ols_stepwise (ols_step_both_p), 57
+ols_test_bartlett, 62, 64, 67, 69
+ols_test_breusch_pagan, 62, 63, 67, 69
+ols_test_correlation, 26, 28, 30, 65, 68
+ols_test_f, 62, 64, 66, 69
+ols_test_normality, 26, 28, 30, 65, 67
+ols_test_score, 62, 64, 67, 68
+ols_update, 69
+ols_vif_tol (ols_coll_diag), 7
+olsrr, 5
+olsrr-package (olsrr), 5
+plot.ols_step_all_possible
+(ols_step_all_possible), 49
+plot.ols_step_backward_aic
+(ols_step_backward_aic), 51
+plot.ols_step_backward_p
+(ols_step_backward_p), 53
+plot.ols_step_best_subset
+(ols_step_best_subset), 54
+plot.ols_step_both_aic
+(ols_step_both_aic), 56
+plot.ols_step_both_p (ols_step_both_p),
+57
+plot.ols_step_forward_aic
+(ols_step_forward_aic), 59
+74 INDEX
+plot.ols_step_forward_p
+(ols_step_forward_p), 60
+rivers, 70
+rvsr_plot_shiny, 70
+stepdata, 71
+surgical, 71
