@@ -18,12 +18,14 @@ Exercises
 Singular covariance estimates in random regression models
 -
 Benchmark Report for /home/bates/.julia/packages/MixedModels/dn0WY/src/MixedModels.jl
-Models With Multiple Random-effects Terms Edit on GitHub
+
+odels With Multiple Random-effects Terms Edit on GitHub
 Models With Multiple Random-effects Terms
 The mixed models considered in the previous chapter had only one random-effects term, which was a simple, scalar random-effects term, and a single fixed-effects coefficient. Although such models can be useful, it is with the facility to use multiple random-effects terms and to use random-effects terms beyond a simple, scalar term that we can begin to realize the flexibility and versatility of mixed models.
 
 In this chapter we consider models with multiple simple, scalar random-effects terms, showing examples where the grouping factors for these terms are in completely crossed or nested or partially crossed configurations. For ease of description we will refer to the random effects as being crossed or nested although, strictly speaking, the distinction between nested and non-nested refers to the grouping factors, not the random effects.
 
+<pre><code>
 julia> using DataFrames, Distributions, FreqTables, MixedModels, RData, Random
 
 julia> using Gadfly
@@ -55,12 +57,14 @@ julia> function hpdinterval(v, level=0.95)
     return [leftendpts[ind], rtendpts[ind]]
 end
 hpdinterval (generic function with 2 methods)
-A Model With Crossed Random Effects
+</code></pre>
+
+##### A Model With Crossed Random Effects
 One of the areas in which the methods in the package for are particularly effective is in fitting models to cross-classified data where several factors have random effects associated with them. For example, in many experiments in psychology the reaction of each of a group of subjects to each of a group of stimuli or items is measured. If the subjects are considered to be a sample from a population of subjects and the items are a sample from a population of items, then it would make sense to associate random effects with both these factors.
 
 In the past it was difficult to fit mixed models with multiple, crossed grouping factors to large, possibly unbalanced, data sets. The methods in the package are able to do this. To introduce the methods let us first consider a small, balanced data set with crossed grouping factors.
 
-The Penicillin Data
+#### The Penicillin Data
 The data are derived from Table 6.6, p. 144 of Davies (), where they are described as coming from an investigation to
 
 assess the variability between samples of penicillin by the B. subtilis method. In this test method a bulk-innoculated nutrient agar medium is poured into a Petri dish of approximately 90 mm. diameter, known as a plate. When the medium has set, six small hollow cylinders or pots (about 4 mm. in diameter) are cemented onto the surface at equally spaced intervals. A few drops of the penicillin solutions to be compared are placed in the respective cylinders, and the whole plate is placed in an incubator for a given time. Penicillin diffuses from the pots into the agar, and this produces a clear circular zone of inhibition of growth of the organisms, which can be readily measured. The diameter of the zone is related in a known way to the concentration of penicillin in the solution.
@@ -73,12 +77,13 @@ julia> describe(dat[:Penicillin])
 │ 1   │ Y        │ 22.9722 │ 18.0 │ 23.0   │ 27.0 │         │          │
 │ 2   │ G        │         │ a    │        │ x    │ 24      │          │
 │ 3   │ H        │         │ A    │        │ F    │ 6       │          │
+</code></pre>
 of the data, then plot it
 
 The variation in the diameter is associated with the plates and with the samples. Because each plate is used only for the six samples shown here we are not interested in the contributions of specific plates as much as we are interested in the variation due to plates and in assessing the potency of the samples after accounting for this variation. Thus, we will use random effects for the factor. We will also use random effects for the factor because, as in the Dyestuff example, we are more interested in the sample-to-sample variability in the penicillin samples than in the potency of a particular sample.
 
 In this experiment each sample is used on each plate. We say that the and factors are crossed, as opposed to nested factors, which we will describe in the next section. By itself, the designation “crossed” just means that the factors are not nested. If we wish to be more specific, we could describe these factors as being completely crossed, which means that we have at least one observation for each combination of a level of G and a level of H. We can see this in Fig. [fig:Penicillindot] and, because there are moderate numbers of levels in these factors, we can check it in a cross-tabulation
-
+<pre><code>
 julia> freqtable(dat[:Penicillin][:H], dat[:Penicillin][:G])
 6×24 Named Array{Int64,2}
 Dim1 ╲ Dim2 │ a  b  c  d  e  f  g  h  i  j  …  o  p  q  r  s  t  u  v  w  x
@@ -89,13 +94,14 @@ C           │ 1  1  1  1  1  1  1  1  1  1     1  1  1  1  1  1  1  1  1  1
 D           │ 1  1  1  1  1  1  1  1  1  1     1  1  1  1  1  1  1  1  1  1
 E           │ 1  1  1  1  1  1  1  1  1  1     1  1  1  1  1  1  1  1  1  1
 F           │ 1  1  1  1  1  1  1  1  1  1  …  1  1  1  1  1  1  1  1  1  1
+</code></pre>
 Like the Dyestuff data, the factors in the Penicillin data are balanced. That is, there are exactly the same number of observations on each plate and for each sample and, furthermore, there is the same number of observations on each combination of levels. In this case there is exactly one observation for each combination of G, the plate, and H, the sample. We would describe the configuration of these two factors as an unreplicated, completely balanced, crossed design.
 
 In general, balance is a desirable but precarious property of a data set. We may be able to impose balance in a designed experiment but we typically cannot expect that data from an observation study will be balanced. Also, as anyone who analyzes real data soon finds out, expecting that balance in the design of an experiment will produce a balanced data set is contrary to “Murphy’s Law”. That’s why statisticians allow for missing data. Even when we apply each of the six samples to each of the 24 plates, something could go wrong for one of the samples on one of the plates, leaving us without a measurement for that combination of levels and thus an unbalanced data set.
 
-A Model For the Penicillin Data
+### A Model For the Penicillin Data
 A model incorporating random effects for both the plate and the sample is straightforward to specify — we include simple, scalar random effects terms for both these factors.
-
+<pre><code>
 julia> penm = fit(LinearMixedModel, @formula(Y ~ 1 + (1|G) + (1|H)), dat[:Penicillin])
 Linear mixed model fit by maximum likelihood
  Formula: Y ~ 1 + (1 | G) + (1 | H)
@@ -112,6 +118,7 @@ Variance components:
   Fixed-effects parameters:
              Estimate Std.Error z value P(>|z|)
 (Intercept)   22.9722  0.744596 30.8519  <1e-99
+</code></pre>
 
 This model display indicates that the sample-to-sample variability has the greatest contribution, then plate-to-plate variability and finally the “residual” variability that cannot be attributed to either the sample or the plate. These conclusions are consistent with what we see in the data plot (Fig. [fig:Penicillindot]).
 
@@ -123,6 +130,7 @@ In chapter [chap:ExamLMM] we saw that a model with a single, simple, scalar rand
 
 The relative covariance factor, Λθ, (Fig. [fig:fm03LambdaLimage], left panel) is no longer a multiple of the identity. It is now block diagonal, with two blocks, one of size 24 and one of size 6, each of which is a multiple of the identity. The diagonal elements of the two blocks are θ1 and θ2, respectively. The numeric values of these parameters can be obtained as
 
+<pre><code>
 julia> show(getθ(penm))
 [1.53758, 3.21975]
 or as the Final parameter vector in the opsum field of penm
@@ -144,13 +152,13 @@ Function evaluations:     44
 Final parameter vector:   [1.53758, 3.21975]
 Final objective value:    332.18834867237246
 Return code:              FTOL_REACHED
-
+</code></pre>
 The first parameter is the relative standard deviation of the random effects for plate, which has the value 0.8455646/0.5499331 = 1.53758 at convergence, and the second is the relative standard deviation of the random effects for sample (1.7706475/0.5499331 = 3.21975).
 
 Because Λθ is diagonal, the pattern of non-zeros in Λ′θZ′ZΛθ+I will be the same as that in Z′Z, shown in the middle panel of Fig. [fig:fm03LambdaLimage]. The sparse Cholesky factor, L, shown in the right panel, is lower triangular and has non-zero elements in the lower right hand corner in positions where Z′Z has systematic zeros. We say that “fill-in” has occurred when forming the sparse Cholesky decomposition. In this case there is a relatively minor amount of fill but in other cases there can be a substantial amount of fill and we shall take precautions so as to reduce this, because fill-in adds to the computational effort in determining the MLEs or the REML estimates.
 
 A bootstrap simulation of the model
-
+<pre><code>
 julia> @time penmbstp = bootstrap(10000, penm);
  24.313179 seconds (83.13 M allocations: 2.532 GiB, 3.95% gc time)
 provides the density plots
@@ -163,6 +171,7 @@ provides the density plots
 
 julia> plot(penmbstp, x = :σ₂, density, xlabel("σ₂"))
 Plot(...)
+</code></pre>
 A profile zeta plot (Fig. [fig:fm03prplot]) for the parameters in model
 
 Profile zeta plot of the parameters in model .
@@ -170,18 +179,20 @@ Profile zeta plot of the parameters in model .
 [fig:fm03prplot]
 
 leads to conclusions similar to those from Fig. [fig:fm1prof] for model in the previous chapter. The fixed-effect parameter, β1, for the constant term has symmetric intervals and is over-dispersed relative to the normal distribution. The logarithm of σ has a good normal approximation but the standard deviations of the random effects, σ1 and σ2, are skewed. The skewness for σ2 is worse than that for σ1, because the estimate of σ2 is less precise than that of σ1, in both absolute and relative senses. For an absolute comparison we compare the widths of the confidence intervals for these parameters.
-
+<pre><code>
                      2.5 %     97.5 %
     .sig01       0.6335658  1.1821040
     .sig02       1.0957893  3.5562919
     .sigma       0.4858454  0.6294535
     (Intercept) 21.2666274 24.6778176
+</code></pre>    
 In a relative comparison we examine the ratio of the endpoints of the interval divided by the estimate.
-
+<pre><code>
 
                2.5 %   97.5 %
     .sig01 0.7492746 1.397993
     .sig02 0.6188634 2.008469
+</code></pre>    
 The lack of precision in the estimate of σ2 is a consequence of only having 6 distinct levels of the factor. The factor, on the other hand, has 24 distinct levels. In general it is more difficult to estimate a measure of spread, such as the standard deviation, than to estimate a measure of location, such as a mean, especially when the number of levels of the factor is small. Six levels are about the minimum number required for obtaining sensible estimates of standard deviations for simple, scalar random effects terms.
 
 shows patterns similar to those in Fig. [fig:fm1profpair] for pairs of parameters in model fit to the data. On the ζ scale (panels below the diagonal) the profile traces are nearly straight and orthogonal with the exception of the trace of ζ(σ2) on ζ(β0) (the horizontal trace for the panel in the (4,2) position). The pattern of this trace is similar to the pattern of the trace of ζ(σ1) on ζ(β1) in Fig. [fig:fm1profpair]. Moving β0 from its estimate, βˆ0, in either direction will increase the residual sum of squares. The increase in the residual variability is reflected in an increase of one or more of the dispersion parameters. The balanced experimental design results in a fixed estimate of σ and the extra apparent variability must be incorporated into σ1 or σ2.
@@ -199,13 +210,13 @@ Conversely, if we tried to plot contours on the scale of σ21 and σ22 (not show
 A Model With Nested Random Effects
 In this section we again consider a simple example, this time fitting a model with nested grouping factors for the random effects.
 
-The Pastes Data
+#### The Pastes Data
 The third example from Davies (1972) is described as coming from
 
 deliveries of a chemical paste product contained in casks where, in addition to sampling and testing errors, there are variations in quality between deliveries …As a routine, three casks selected at random from each delivery were sampled and the samples were kept for reference. …Ten of the delivery batches were sampled at random and two analytical tests carried out on each of the 30 samples.
 
 The structure and summary of the data object are
-
+<pre><code>
 julia> describe(dat[:Pastes])
 4×8 DataFrame. Omitted printing of 1 columns
 │ Row │ variable │ mean    │ min  │ median │ max  │ nunique │ nmissing │
@@ -215,8 +226,9 @@ julia> describe(dat[:Pastes])
 │ 2   │ H        │         │ A    │        │ J    │ 10      │          │
 │ 3   │ c        │         │ a    │        │ c    │ 3       │          │
 │ 4   │ G        │         │ A:a  │        │ J:c  │ 30      │          │
+</code></pre>
 As stated in the description in Davies (1972), there are 30 samples, three from each of the 10 delivery batches. We have labelled the levels of the sample factor with the label of the batch factor followed by a, b or c to distinguish the three samples taken from that batch.
-
+<pre><code>
 julia> freqtable(dat[:Pastes][:H], dat[:Pastes][:G])
 10×30 Named Array{Int64,2}
 Dim1 ╲ Dim2 │ A:a  A:b  A:c  B:a  B:b  B:c  …  I:a  I:b  I:c  J:a  J:b  J:c
@@ -231,6 +243,7 @@ G           │   0    0    0    0    0    0       0    0    0    0    0    0
 H           │   0    0    0    0    0    0       0    0    0    0    0    0
 I           │   0    0    0    0    0    0       2    2    2    0    0    0
 J           │   0    0    0    0    0    0  …    0    0    0    2    2    2
+</code></pre>
 When plotting the strength versus sample and in the data we should remember that we have two strength measurements on each of the 30 samples. It is tempting to use the cask designation (‘a’, ‘b’ and ‘c’) to determine, say, the plotting symbol within a sample. It would be fine to do this within a batch but the plot would be misleading if we used the same symbol for cask ‘a’ in different batches. There is no relationship between cask ‘a’ in batch ‘A’ and cask ‘a’ in batch ‘B’. The labels ‘a’, ‘b’ and ‘c’ are used only to distinguish the three samples within a batch; they do not have a meaning across batches.
 
 Strength of paste preparations according to the and the within the batch. There were two strength measurements on each of the 30 samples; three samples each from 10 batches.
