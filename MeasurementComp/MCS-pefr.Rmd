@@ -1,0 +1,36 @@
+---
+title: "MethComp Data Sets"
+author: "KevinOBrien"
+date: "18 September 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(MethComp)
+library(nlme)
+library(lme4)
+library(magrittr)
+library(tidyr)
+library(broom)
+library(dplyr)
+```
+
+```{r}
+data(PEFR)
+head(PEFR)
+```
+
+
+```{r}
+PEFR2 <- PEFR  %>% spread(repl,y) %>% set_colnames(c("meth","item","repl1","repl2")) 
+PEFR2 <- data.frame(PEFR2,y.means = (PEFR2 %>% select(starts_with("repl")) %>% rowMeans(na.rm=TRUE) ))
+```
+
+```{r}
+
+var.test(y.means ~ meth,data=PEFR2)
+t.test(y ~ meth,data=PEFR)
+
+
+
+```
