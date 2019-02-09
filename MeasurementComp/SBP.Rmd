@@ -1,0 +1,205 @@
+---
+title: "Untitled"
+author: "Kevin O Brien"
+date: "12 December 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("MethComp")
+#install.packages("stringr")
+#install.packages("influence.ME")
+#install.packages("strip")
+
+#### Code Segment 1 : Load R Packages ####
+library(MethComp)
+library(nlme)
+library(optimx)
+library(lme4)
+library(magrittr)
+library(tidyr)
+library(influence.ME)
+library(broom)
+library(ggplot2)
+library(dplyr)
+#library(strip)
+options(digits = 5)
+```
+
+```{r, include=FALSE}
+data(sbp)
+head(sbp)
+
+```
+
+
+```{r}
+
+
+```
+
+```{r}
+#sbp <- sbp %>% rename("item" = Id, "repl" = Rep, "meth" = Obs, "y" = Vic) %>% dplyr::select(-Sub)
+sbp <- sbp %>% mutate(item = factor(item)) %>% filter(meth != "R")
+
+sbp.wide <-(sbp %>% spread(meth,y)) %>% group_by(item) %>% summarize(J = mean(J,na.rm=TRUE),S=mean(S,na.rm=TRUE))
+sbp.mean <-(sbp %>% spread(meth,y)) %>% group_by(item) %>% summarize(J = mean(J,na.rm=TRUE),S=mean(S,na.rm=TRUE))
+```
+
+```{r}
+mod.1 <- lm( y ~ meth , data = sbp)
+summary(mod.1)
+```
+
+```{r}
+confint(mod.1)
+```
+
+```{r}
+
+mod.2 <- lm( S ~ J , data = (sbp %>% spread(meth,y)))
+summary(mod.2)
+```
+
+```{r}
+confint(mod.2)
+```
+
+```{r}
+mod.3 <- lm( S ~ J , data = (sbp.mean))
+summary(mod.3)
+```
+
+```{r}
+confint(mod.3)
+```
+
+```{r,include=FALSE}
+ttest <- function(reg, coefnum, val){
+  co <- coef(summary(reg))
+  tstat <- (co[coefnum,1]-val)/co[coefnum,2]
+  2 * pt(abs(tstat), reg$df.residual, lower.tail = FALSE) %>% round(4)
+}
+```
+
+```{r}
+ttest(mod.3, 2,1)
+```
+
+```{r,include=FALSE}
+data(sbp)
+
+#sbp <- sbp %>% rename("item" = Id, "repl" = Rep, "meth" = Obs, "y" = Vic) %>% dplyr::select(-Sub)
+sbp <- sbp %>% mutate(item = factor(item)) %>% filter(meth != "R")
+```
+
+```{r}
+
+mod.4 <- lme( y ~ meth,random = ~ 1|item, data = sbp)
+
+summary(mod.4)
+
+
+# tidy(mod.4)
+
+mod.4 <- lmer( y ~ meth + (1|item), data = sbp)
+
+summary(mod.4)
+
+
+tidy(mod.4)
+```
+
+```{r}
+mod.5 <- lme( S ~ J , random = ~ 1|item, data = sbp.wide)
+
+summary(mod.5)
+
+
+#intervals(mod.5)
+```
+
+```{r}
+mod.5 <- lme( S ~ J , random = ~ 1|item, data = (sbp %>% spread(meth,y)))
+
+summary(mod.5)
+```
+
+```{r}
+
+intervals(mod.5)
+
+mod.5 <- lmer( S ~ J + (1|item), data = (sbp %>% spread(meth,y)))
+
+summary(mod.5)
+
+```
+```{r}
+
+sbp.2 <- sbp %>% spread(meth,y)
+mod.5 <- lmer( S ~ J + (1|item), data = sbp.2)
+
+#summary(mod.5)
+
+tidy(mod.5)
+```
+
+```{r}
+mod.6 <-  lmer( y ~ meth-1 + (1|item) + (1|meth) , data = sbp,
+                control = lmerControl(
+                           optimizer ='optimx', optCtrl=list(method='nlminb')))
+summary(mod.6)
+```
+
+```{r}
+
+tidy(mod.6)
+```
+
+```{r,include=FALSE}
+sbp.aug <- augment(mod.6,sbp)
+head(sbp.aug)
+```
+
+```{r}
+var.test(.wtres~ meth, data = sbp.aug)
+```
+We conclude that there is no significant difference in within-item error terms.
+```{r}
+
+grouping.levels(mod.6, "item")
+mod.6.inf  <- influence(mod.6,group="item")
+```
+```{r}
+mod.6.inf
+
+```
+
+```{r}
+CDs<- cooks.distance(mod.6.inf)
+subjectnames<- rownames(cooks.distance(mod.6.inf))
+CDdf <- data.frame(subjectnames,CDs)
+```
+
+```{r}
+dfbeta <- dfbetas(mod.6.inf)
+```
+
+```{r}
+subjectnames <- rownames(dfbetas(mod.6.inf))
+```
+
+```{r}
+DFBetadf <- data.frame(subjectnames,dfbeta)
+
+```
+```{r}
+head(DFBetadf)
+```
+```{r}
+library(ggplot2)
+ggplot(data=DFBetadf,aes(x=methJ,y=methS)) + geom_point() + geom_abline() + 
+  stat_smooth(method="lm",colour="red",se=FALSE)
+```
