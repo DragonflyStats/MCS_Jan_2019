@@ -65,9 +65,37 @@ rulesepcolor=\color{black},
 \section{Conclusion}
 
 Traditional procedures, such as the Bland-Altman plot and linear models, can provide important insights into the key questions of method comparison problem, i.e. agreement and inter-method bias. However such procedures are constrained by an assumption of a single measurement per item per method. Several papers reference examples where there are multiple measurements per item per method, with \citet{BA99,BXC2008,ARoy2009} as examples. In such cases, traditional procedures are insufficient, and a more complex framework is required. 
-Mixed models are an extremely useful but computationally intensive approach. Computational
+LME models are an extremely useful but computationally intensive approach. Computational
 limitations are especially important because mixed models are commonly applied to
 moderately large data sets
+
+%%-- https://m-clark.github.io/mixed-models-with-R/extensions.html#residual-structure
+
+The method comparison problem, as posed by Barnhart, requires specific estimates regarding the residual covariance/correlation structure. 
+However, the lme4 R package does not have the ability to model residual covariance structures.
+lme4 was designed with the intention of beingfaster and better performing than other packages. Design choices 
+in the construction of the package means that lmer works by default using a method that precludes the functionality 
+necessary to compute those estimates.
+
+Cognescent of the limitations this places on researchers,\citet{Clark} maintains a preference for nlme in this regard, while also advocating the use of
+mgcv. For the purposes of implementing the proposed models, the mgcv R package can be viewed as an extension of the nlme R package, in
+that it uses nlme functionality in fitting models. Other than to remark that mgcv provides useful capabilities that extende nlme, it will not require additional discussion.
+
+ \citet{Clark} proposed a Bayesian approach to fitting LME, i.e. with rstanarm or brms. 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FlexLambda
+% https://bbolker.github.io/mixedmodels-misc/notes/corr_braindump.html
+
+
+
+
+A branch is a alternative implementation of the main code base for a software project
+
+Functionality is implemented for various diagonal variance structures, such as compound-symmetric.
+The lme4/flexLambda branch is very out of date, but could conceivably be brought up to date; see here and here for some of the relevant code; 
+
+
 
 
 \bibliographystyle{chicago}
