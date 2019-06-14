@@ -1,0 +1,149 @@
+
+\documentclass[12pt, a4paper]{report}
+
+\usepackage{epsfig}
+\usepackage{subfigure}
+%\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{graphicx}
+%\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{subfiles}
+\usepackage{framed}
+\usepackage{subfiles}
+\usepackage{amsthm, amsmath}
+\usepackage{amsbsy}
+\usepackage{framed}
+\usepackage[usenames]{color}
+\usepackage{listings}
+\lstset{% general command to set parameter(s)
+basicstyle=\small, % print whole listing small
+keywordstyle=\color{red}\itshape,
+% underlined bold black keywords
+commentstyle=\color{blue}, % white comments
+stringstyle=\ttfamily, % typewriter type for strings
+showstringspaces=false,
+numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, %
+frame=shadowbox,
+rulesepcolor=\color{black},
+,columns=fullflexible
+} %
+%\usepackage[dvips]{graphicx}
+\usepackage{natbib}
+\bibliographystyle{chicago}
+\usepackage{vmargin}
+% left top textwidth textheight headheight
+% headsep footheight footskip
+
+
+\renewcommand{\baselinestretch}{1.5}
+\pagenumbering{arabic}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{ill}[theorem]{Example}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{axiom}{Axiom}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{notation}{Notation}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+\renewcommand{\thenotation}{}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+\title{Research notes: linear mixed effects models}
+\author{ } \date{ }
+
+
+\begin{document}
+
+\section*{Test 3}
+The last of the three variability tests is carried out to compare the overall variabilities of both methods.
+
+Overall variability between the two methods ($\Omega$) is sum of between-subject ($D$) and within-subject variability ($\Sigma$),
+\[
+\mbox{Block } \boldsymbol{\Omega}_i = \left[ \begin{array}{cc} d^2_1 & d_{12}\\ d_{12} & d^2_2\\ \end{array} \right]
++ \left[\begin{array}{cc} \sigma^2_1 & \sigma_{12}\\ \sigma_{12} & \sigma^2_2\\ \end{array}\right].
+\]
+
+
+With the null model the MLE of the within-subject variance covariance matrix is given below. The overall variabilities for the null and alternative models, respectively, are determined to be as follows;
+\[
+\boldsymbol{\hat{\Omega}}_{CS} = \left( \begin{array}{cc}
+1007.92  & 801.65  \\
+801.65  & 1007.92  \\
+\end{array}\right),
+\hspace{1.5cm}
+\boldsymbol{\hat{\Omega}}_{Symm} = \left( \begin{array}{cc}
+961.38 & 801.40  \\
+801.40 & 1054.43  \\
+\end{array}\right),
+\]
+
+The log-likelihood of the alternative model model is $-2045.2$, and again, the null model has a log-likelihood of $-2030.7$. The test statistic is $28.884$, and the $p-$value is less than $0.0001$. The null hypothesis, that both methods have equal overall variability, is rejected. Further to the second variability test, it is known that this difference is specifically due to the difference of within-subject variabilities.
+
+\subsection{Model Fit 3}
+
+This model is a more general model, compared to 'model fit 2'. This model treats the random interactions for each subject as a vector and
+allows the variance-covariance matrix for that vector to be estimated from the set of all positive-definite matrices.
+$\boldsymbol{y_{i}}$ is the entire response vector for the $i$th subject.
+$\boldsymbol{X_{i}}$ and $\boldsymbol{Z_{i}}$  are the fixed- and random-effects design matrices respectively.
+\begin{equation*}
+\boldsymbol{y_{i}} = \boldsymbol{X_{i}\beta}  + \boldsymbol{Z_{i}b_{i}} + \boldsymbol{\epsilon_{i}}, \qquad i=1,\dots,85
+\end{equation*}
+\begin{eqnarray*}
+\boldsymbol{Z_{i}} \sim \mathcal{N}(\boldsymbol{0,\Psi}),\qquad
+\boldsymbol{\epsilon_{i}} \sim \mathcal{N}(\boldsymbol{0,\sigma^2\Lambda})
+\end{eqnarray*}
+
+
+\subsection{Variability Test 3}
+This is a test on whether both methods $A$ and $B$ have the same overall variability or not.
+\begin{eqnarray}
+H_{0}: \mbox{ }\sigma_{A}  = \sigma_{B} \\
+H_{A}: \mbox{ }\sigma_{A}  = \sigma_{B}
+\end{eqnarray}
+
+The null model is constructed a symmetric form for both $\boldsymbol{\hat{D}}$ and $\boldsymbol{\hat{\Lambda}}$ while the alternative model uses a compound symmetry form for both.
+
+\subsubsection{Bland-Altman's Blood Data}
+With the null model the MLE of the within-subject variance covariance matrix is given below.
+
+\begin{equation}
+\boldsymbol{\hat{\Sigma}_{Symm}} = \left( \begin{array}{cc}
+961.38 & 801.40  \\
+801.40 & 1054.43  \\
+\end{array}\right)
+\end{equation}
+
+With the alternative model the MLE is as follows:
+\begin{equation}
+\boldsymbol{\hat{\Sigma}_{CS}} = \left( \begin{array}{cc}
+1007.92  & 801.65  \\
+801.65  & 1007.92  \\
+\end{array}\right)
+\end{equation}
+
+
+The test statistic is the difference of the $-2$ log likelihoods; $28.884$. The $p-$value is less than $0.0001$. We again reject the null hypothesis. Each model has a different overall variability, a foregone conclusion from the second variability test.
+
+
+\subsection{Nested Model (Overall Variability)}
+Additionally there is a third nested model, that can be used to test overall variability, substantively a a joint test for between-item and within-item variability. The motivation for including such a test in the suite is not clear, although it does circumvent the need for multiple comparison procedures in certain circumstances, hence providing a simplified procedure for non-statisticians.
+
+\begin{framed}
+\begin{verbatim}
+> NMO.fit = lme(y ~ meth-1, data = dat,   #CS , CS# 
++     random = list(item=pdCompSymm(~ meth-1)), 
++     correlation = corCompSymm(form=~1 | item/repl), 
++     method="ML")
+\end{verbatim}
+\end{framed}
+
+
+
+\end{document}
